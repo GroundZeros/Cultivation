@@ -34,7 +34,7 @@ jobs:
           toolchain: stable
 
       - name: Install deps and build
-        run: yarn && yarn build
+        run: yarn && yarn tauri build
 
       - name: Compress build
         uses: vimtor/action-zip@v1
@@ -78,7 +78,7 @@ jobs:
             librsvg2-dev
 
       - name: Install deps and build release
-        run: yarn && yarn build
+        run: yarn && NO_STRIP=true yarn tauri build
 
       - name: Compress build
         uses: vimtor/action-zip@v1
