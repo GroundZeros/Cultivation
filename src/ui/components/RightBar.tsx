@@ -1,4 +1,4 @@
-import { invoke } from '@tauri-apps/api'
+import { invoke } from '@tauri-apps/api/core'
 import React from 'react'
 
 import Discord from '../../resources/icons/discord.svg'

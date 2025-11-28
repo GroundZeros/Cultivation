@@ -16,6 +16,3 @@ let isDebug = false
 }
 
 root.render(<React.StrictMode>{isDebug ? <Debug /> : <App />}</React.StrictMode>)
-
-import reportWebVitals from './utils/reportWebVitals'
-isDebug && reportWebVitals(console.log)

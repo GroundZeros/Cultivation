@@ -1,4 +1,4 @@
-use http::header;
+use tauri::http::header;
 use once_cell::sync::Lazy;
 use reqwest::header::{CONTENT_TYPE, USER_AGENT};
 static CLIENT: Lazy<reqwest::Client> = Lazy::new(|| {

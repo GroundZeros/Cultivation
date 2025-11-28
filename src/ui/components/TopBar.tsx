@@ -1,14 +1,16 @@
 import React from 'react'
-import { app, invoke } from '@tauri-apps/api'
-import { appWindow } from '@tauri-apps/api/window'
+import { app } from '@tauri-apps/api'
+import { invoke } from '@tauri-apps/api/core'
+import { getCurrentWebviewWindow } from '@tauri-apps/api/webviewWindow'
 import { getConfig, setConfigOption } from '../../utils/configuration'
 import Tr from '../../utils/language'
-import { confirm } from '@tauri-apps/api/dialog'
+import { confirm } from '@tauri-apps/plugin-dialog'
 
 import './TopBar.css'
 import closeIcon from '../../resources/icons/close.svg'
 import minIcon from '../../resources/icons/min.svg'
 import { unpatchGame } from '../../utils/rsa'
+const appWindow = getCurrentWebviewWindow()
 
 interface IProps {
   children?: React.ReactNode | React.ReactNode[]
@@ -17,7 +19,7 @@ interface IProps {
 interface IState {
   version: string
   clicks: number
-  intv: NodeJS.Timeout | null
+  intv: number
 }
 
 export default class TopBar extends React.Component<IProps, IState> {
@@ -27,7 +29,7 @@ export default class TopBar extends React.Component<IProps, IState> {
     this.state = {
       version: '0.0.0',
       clicks: 0,
-      intv: null,
+      intv: 0,
     }
 
     this.activateClick = this.activateClick.bind(this)

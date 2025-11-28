@@ -1,4 +1,4 @@
-import { invoke } from '@tauri-apps/api/tauri'
+import { invoke } from '@tauri-apps/api/core'
 import { listen } from '@tauri-apps/api/event'
 import { byteToString } from './string'
 
@@ -57,7 +57,6 @@ export default class DownloadHandler {
 
       // Call onFinish callback
       if (this.downloads[index]?.onFinish) {
-        // @ts-expect-error onFinish is checked for existence before being called
         this.downloads[index]?.onFinish()
       }
     })

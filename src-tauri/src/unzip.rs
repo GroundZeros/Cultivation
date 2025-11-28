@@ -1,7 +1,9 @@
 use std::fs::{read_dir, File};
-use std::path;
+use std::path::{self, PathBuf};
 use std::thread;
-use unrar::archive::Archive;
+use tauri::Emitter;
+use unrar::Archive;
+use simple_zip::zip::Decompress;
 
 #[tauri::command]
 pub fn unzip(
@@ -70,22 +72,22 @@ pub fn unzip(
     if zipfile.ends_with(".rar") {
       success = extract_rar(&zipfile, &f, &full_path, top_level.unwrap_or(true));
 
-      let archive = Archive::new(zipfile.clone());
-      name = archive.list().unwrap().next().unwrap().unwrap().filename;
+      let archive = Archive::new(&zipfile);
+      name = archive.open_for_listing().unwrap().next().unwrap().unwrap().filename;
     } else if zipfile.ends_with(".7z") {
-      success = extract_7z(&zipfile, &f, &full_path, top_level.unwrap_or(true));
+      success = Ok(extract_7z(&zipfile, &f, &full_path, top_level.unwrap_or(true)));
 
-      name = String::from("banana");
+      name = PathBuf::from("banana");
     } else {
-      success = extract_zip(&zipfile, &f, &full_path, top_level.unwrap_or(true));
+      success = Ok(extract_zip(&full_path));
 
       // Get the name of the inenr file in the zip file
       let mut zip = zip::ZipArchive::new(&f).unwrap();
       let file = zip.by_index(0).unwrap();
-      name = file.name().to_string();
+      name = PathBuf::from(file.name());
     }
 
-    if !success {
+    if success.unwrap_or(false) {
       let mut res_hash = std::collections::HashMap::new();
 
       res_hash.insert("path".to_string(), zipfile.to_string());
@@ -94,9 +96,9 @@ pub fn unzip(
     }
 
     // If the contents is a jar file, emit that we have extracted a new jar file
-    if name.ends_with(".jar") {
+    if name.to_str().unwrap().ends_with(".jar") {
       window
-        .emit("jar_extracted", destpath.to_string() + name.as_str())
+        .emit("jar_extracted", destpath.to_string() + name.to_str().unwrap())
         .unwrap();
     }
 
@@ -150,44 +152,25 @@ pub fn unzip(
   });
 }
 
-fn extract_rar(rarfile: &str, _f: &File, full_path: &path::Path, _top_level: bool) -> bool {
-  let archive = Archive::new(rarfile.to_string());
+fn extract_rar(rarfile: &str, _f: &File, full_path: &path::Path, _top_level: bool) -> Result<bool, Box<dyn std::error::Error>> {
+  let archive = Archive::new(&rarfile);
 
   let mut open_archive = archive
-    .extract_to(full_path.to_str().unwrap().to_string())
-    .unwrap();
-
-  match open_archive.process() {
-    Ok(_) => {
-      println!(
-        "Extracted rar file to: {}",
-        full_path.to_str().unwrap_or("Error")
-      );
-
-      true
+    .open_for_processing().unwrap();
+  while let Some(header) = open_archive.read_header()? {
+    open_archive = if header.entry().is_directory() || header.entry().is_file() {
+      header.extract_to(full_path.to_str().unwrap().to_string())?
+    } else {
+      header.skip()?
     }
-    Err(e) => {
-      println!("Failed to extract rar file: {}", e);
-      false
-    }
+    
   }
+  Ok(true)
 }
 
-fn extract_zip(_zipfile: &str, f: &File, full_path: &path::Path, top_level: bool) -> bool {
-  match zip_extract::extract(f, full_path, top_level) {
-    Ok(_) => {
-      println!(
-        "Extracted zip file to: {}",
-        full_path.to_str().unwrap_or("Error")
-      );
-
-      true
-    }
-    Err(e) => {
-      println!("Failed to extract zip file: {}", e);
-      false
-    }
-  }
+fn extract_zip(full_path: &path::Path) -> bool {
+  Decompress::local_buffer(full_path);
+  true
 }
 
 fn extract_7z(sevenzfile: &str, _f: &File, full_path: &path::Path, _top_level: bool) -> bool {

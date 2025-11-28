@@ -35,7 +35,7 @@ pub struct Configuration {
 }
 
 pub fn config_path(profile: String) -> PathBuf {
-  let mut path = tauri::api::path::data_dir().unwrap();
+  let mut path = dirs::data_dir().unwrap();
   path.push("cultivation");
   if profile.as_str() == "default" {
     path.push("configuration.json");

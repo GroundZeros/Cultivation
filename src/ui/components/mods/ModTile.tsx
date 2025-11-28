@@ -7,9 +7,10 @@ import Like from '../../../resources/icons/like.svg'
 import Eye from '../../../resources/icons/eye.svg'
 import Download from '../../../resources/icons/download.svg'
 import Folder from '../../../resources/icons/folder.svg'
-import { shell } from '@tauri-apps/api'
+import {} from '@tauri-apps/api'
 import Checkbox from '../common/Checkbox'
 import { disableMod, enableMod, modIsEnabled } from '../../../utils/mods'
+import * as shell from '@tauri-apps/plugin-shell'
 
 interface IProps {
   mod: ModData | PartialModData

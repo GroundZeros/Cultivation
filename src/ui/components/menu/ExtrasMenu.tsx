@@ -5,7 +5,7 @@ import Menu from './Menu'
 
 import './ExtrasMenu.css'
 import BigButton from '../common/BigButton'
-import { invoke } from '@tauri-apps/api'
+import { invoke } from '@tauri-apps/api/core'
 import Tr from '../../../utils/language'
 import { getGameExecutable } from '../../../utils/game'
 

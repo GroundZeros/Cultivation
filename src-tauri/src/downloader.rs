@@ -1,4 +1,5 @@
 use once_cell::sync::Lazy;
+use tauri::Emitter;
 
 use std::cmp::min;
 use std::fs::File;

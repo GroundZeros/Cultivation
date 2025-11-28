@@ -1,5 +1,5 @@
 import React from 'react'
-import { open } from '@tauri-apps/api/dialog'
+import { open } from '@tauri-apps/plugin-dialog'
 import { translate } from '../../../utils/language'
 import TextInput from './TextInput'
 import File from '../../../resources/icons/folder.svg'

@@ -1,12 +1,13 @@
-import { fs } from '@tauri-apps/api'
+import {} from '@tauri-apps/api'
 import { dataDir } from '@tauri-apps/api/path'
+import * as fs from '@tauri-apps/plugin-fs'
 
 let configFilePath: string
 let defaultConfig: Configuration
 ;(async () => {
   defaultConfig = {
     toggle_grasscutter: true,
-    game_install_path: 'C:\\Program Files\\Genshin Impact\\Genshin Impact game\\GenshinImpact.exe',
+    game_install_path: 'C:/Program Files/Genshin Impact/Genshin Impact game/GenshinImpact.exe',
     grasscutter_with_game: false,
     grasscutter_path: '',
     java_path: '',
@@ -150,7 +151,7 @@ export async function saveProfileConfig(obj: Configuration) {
   const local = await dataDir()
   const raw = JSON.stringify(obj)
   const prevPath = configFilePath
-  configFilePath = local + 'cultivation/configuration.json'
+  configFilePath = local + '/cultivation/configuration.json'
   await writeConfigFile(raw)
 
   configFilePath = prevPath
@@ -160,34 +161,24 @@ export async function saveNewProfileConfig(obj: Configuration, prof: string) {
   obj['profile'] = prof
   const local = await dataDir()
   const raw = JSON.stringify(obj)
-  configFilePath = local + 'cultivation/profiles/' + obj['profile'] + '.json'
+  configFilePath = local + '/cultivation/profiles/' + obj['profile'] + '.json'
 
-  const file: fs.FsTextFileOption = {
-    path: configFilePath,
-    contents: raw,
-  }
-
-  await fs.writeFile(file)
+  await fs.writeTextFile(configFilePath, raw)
 }
 
 async function readConfigFile() {
   const local = await dataDir()
 
   if (!configFilePath) {
-    configFilePath = local + 'cultivation/configuration.json'
+    configFilePath = local + '/cultivation/configuration.json'
   }
 
-  const dataFiles = await fs.readDir(local + 'cultivation')
+  const dataFiles = await fs.readDir(local + '/cultivation')
 
   // Ensure config exists
   if (!dataFiles.find((fileOrDir) => fileOrDir?.name === 'configuration.json')) {
     // Create config file
-    const file: fs.FsTextFileOption = {
-      path: configFilePath,
-      contents: JSON.stringify(defaultConfig),
-    }
-
-    await fs.writeFile(file)
+    await fs.writeTextFile(configFilePath, JSON.stringify(defaultConfig))
   }
 
   // Read existing config to get profile name
@@ -201,14 +192,14 @@ async function readConfigFile() {
   } else {
     pf = 'configuration.json'
   }
-  configFilePath = local + 'cultivation/' + pf
+  configFilePath = local + '/cultivation/' + pf
 
   // Ensure Cultivation dir exists
   const dirs = await fs.readDir(local)
 
   if (!dirs.find((fileOrDir) => fileOrDir?.name === 'cultivation')) {
     // Create dir
-    await fs.createDir(local + 'cultivation').catch((e) => console.log(e))
+    await fs.mkdir(local + '/cultivation').catch((e) => console.log(e))
   }
 
   const innerDirs = await fs.readDir(local + '/cultivation')
@@ -216,7 +207,7 @@ async function readConfigFile() {
   // Create grasscutter dir for potential installation
   if (!innerDirs.find((fileOrDir) => fileOrDir?.name === 'grasscutter')) {
     // Create dir
-    await fs.createDir(local + 'cultivation/grasscutter').catch((e) => console.log(e))
+    await fs.mkdir(local + '/cultivation/grasscutter').catch((e) => console.log(e))
   }
 
   // Finally, read the file
@@ -225,14 +216,13 @@ async function readConfigFile() {
 
 async function readDefaultConfigFile() {
   const local = await dataDir()
-  configFilePath = local + 'cultivation/configuration.json'
+  configFilePath = local + '/cultivation/configuration.json'
   return await fs.readTextFile(configFilePath)
 }
 
 async function writeConfigFile(raw: string) {
   // All external config functions call readConfigFile, which ensure files exists
-  await fs.writeFile({
-    path: configFilePath,
-    contents: raw,
-  })
+  const encoder = new TextEncoder();
+  const data = encoder.encode(raw)
+  await fs.writeFile(configFilePath, data)
 }

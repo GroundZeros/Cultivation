@@ -1,6 +1,6 @@
 /* eslint-disable indent */
-import { invoke } from '@tauri-apps/api/tauri'
-import React from 'react'
+import { invoke } from '@tauri-apps/api/core'
+import React, { JSX } from 'react'
 import Tr from '../../../utils/language'
 import { getConfig, getConfigOption } from '../../../utils/configuration'
 

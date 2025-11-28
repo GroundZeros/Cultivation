@@ -4,7 +4,7 @@ import './App.css'
 import DownloadHandler from '../utils/download'
 import { getConfigOption } from '../utils/configuration'
 import { getTheme, loadTheme } from '../utils/themes'
-import { convertFileSrc, invoke } from '@tauri-apps/api/tauri'
+import { convertFileSrc, invoke } from '@tauri-apps/api/core'
 import { Main } from './Main'
 import { Mods } from './Mods'
 

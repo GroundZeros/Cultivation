@@ -1,0 +1,33 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Capability for the main window",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "opener:default",
+    "fs:allow-read",
+    "fs:allow-write",
+    "fs:allow-app-write",
+    "fs:allow-app-read",
+    "fs:allow-app-write-recursive",
+    "fs:allow-app-read-recursive",
+    "fs:allow-appcache-write",
+    "fs:allow-appcache-read",
+    {
+      "identifier": "fs:scope",
+      "allow": ["$DATA", "$DATA/cultivation", "$DATA/cultivation/**"]
+    },
+    "shell:allow-execute",
+    "shell:allow-open",
+    "dialog:allow-open",
+    "dialog:allow-save",
+    "dialog:allow-message",
+    "dialog:allow-ask",
+    "dialog:allow-confirm",
+    "core:app:allow-app-show",
+    "core:app:allow-app-hide",
+    "fs:default",
+    "dialog:default"
+  ]
+}

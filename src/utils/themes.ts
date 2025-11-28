@@ -1,6 +1,6 @@
-import { invoke } from '@tauri-apps/api'
+import { invoke } from '@tauri-apps/api/core'
 import { dataDir } from '@tauri-apps/api/path'
-import { convertFileSrc } from '@tauri-apps/api/tauri'
+import { convertFileSrc } from '@tauri-apps/api/core'
 import { getConfig, setConfigOption } from './configuration'
 
 interface Theme {

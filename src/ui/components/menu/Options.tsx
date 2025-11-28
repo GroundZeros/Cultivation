@@ -1,5 +1,5 @@
 import React from 'react'
-import { invoke } from '@tauri-apps/api'
+import { invoke } from '@tauri-apps/api/core'
 import { dataDir } from '@tauri-apps/api/path'
 import DirInput from '../common/DirInput'
 import Menu from './Menu'
@@ -23,7 +23,7 @@ import DownloadHandler from '../../../utils/download'
 import * as meta from '../../../utils/rsa'
 import HelpButton from '../common/HelpButton'
 import SmallButton from '../common/SmallButton'
-import { ask, confirm } from '@tauri-apps/api/dialog'
+import { ask, confirm } from '@tauri-apps/plugin-dialog'
 import TextInput from '../common/TextInput'
 import { unzip } from '../../../utils/zipUtils'
 import { getGameExecutable } from '../../../utils/game'
@@ -392,7 +392,7 @@ export default class Options extends React.Component<IProps, IState> {
     if (
       !(await ask(
         'Set delay for 3dmigoto loader? This is specifically made for GIMI v6 and earlier. Using it on latest GIMI or SRMI will cause issues!!! \n\nWould you like to continue?',
-        { title: 'GIMI Delay', type: 'warning' }
+        { title: 'GIMI Delay', kind: 'warning' }
       ))
     ) {
       return
@@ -405,7 +405,7 @@ export default class Options extends React.Component<IProps, IState> {
 
   async installCert() {
     await invoke('generate_ca_files', {
-      path: (await dataDir()) + 'cultivation',
+      path: (await dataDir()) + '/cultivation',
     })
   }
 
@@ -445,7 +445,7 @@ export default class Options extends React.Component<IProps, IState> {
     // Set to default if not set
     if (!path || path === '') {
       const appdata = await dataDir()
-      folderPath = appdata + 'cultivation\\grasscutter'
+      folderPath = appdata + '/cultivation/grasscutter'
     }
 
     if (path.includes('/')) {
@@ -463,7 +463,7 @@ export default class Options extends React.Component<IProps, IState> {
     // Check if resources zip exists
     if (
       !(await invoke('dir_exists', {
-        path: folderPath + '\\GC-Resources-4.0.zip',
+        path: folderPath + '/GC-Resources-4.0.zip',
       }))
     ) {
       alert('Resources are already unzipped or do not exist! Ensure your resources zip is named "GC-Resources-4.0.zip"')
@@ -475,10 +475,10 @@ export default class Options extends React.Component<IProps, IState> {
     )
 
     // Unzip resources
-    await unzip(folderPath + '\\GC-Resources-4.0.zip', folderPath + '\\', true)
+    await unzip(folderPath + '/GC-Resources-4.0.zip', folderPath + '/', true)
     // Rename folder to resources
     invoke('rename', {
-      path: folderPath + '\\Resources',
+      path: folderPath + '/Resources',
       newName: 'resources',
     })
 

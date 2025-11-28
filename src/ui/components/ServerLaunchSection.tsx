@@ -5,7 +5,7 @@ import TextInput from './common/TextInput'
 import HelpButton from './common/HelpButton'
 import { getConfig, saveConfig, setConfigOption, setProfileOption } from '../../utils/configuration'
 import { translate } from '../../utils/language'
-import { invoke } from '@tauri-apps/api/tauri'
+import { invoke } from '@tauri-apps/api/core'
 
 import Server from '../../resources/icons/server.svg'
 import Plus from '../../resources/icons/plus.svg'
@@ -16,7 +16,7 @@ import { GrasscutterElevation } from './menu/Options'
 import { getGameExecutable, getGameVersion, getGrasscutterJar } from '../../utils/game'
 import { patchGame, unpatchGame } from '../../utils/rsa'
 import { listen } from '@tauri-apps/api/event'
-import { confirm } from '@tauri-apps/api/dialog'
+import { confirm } from '@tauri-apps/plugin-dialog'
 import DownloadHandler from '../../utils/download'
 
 interface IProps {
@@ -141,7 +141,7 @@ export default class ServerLaunchSection extends React.Component<IProps, IState>
         if (
           await confirm(
             "Oops! HTTPS is enabled but you're connecting to localhost! \nHTTPS MUST be disabled for localhost. \n\nWould you like to disable HTTPS and continue?",
-            { title: 'WARNING!!', type: 'warning' }
+            { title: 'WARNING!!', kind: 'warning' }
           )
         ) {
           this.toggleHttps()
@@ -252,7 +252,7 @@ export default class ServerLaunchSection extends React.Component<IProps, IState>
           addr: (this.state.httpsEnabled ? 'https' : 'http') + '://' + this.state.ip + ':' + this.state.port,
         })
         // Connect to proxy
-        await invoke('connect', { port: 8365, certificatePath: (await dataDir()) + '\\cultivation\\ca' })
+        await invoke('connect', { port: 8365, certificatePath: (await dataDir()) + '/cultivation/ca' })
       }
 
       // Open server as well if the options are set

@@ -1,4 +1,4 @@
-import { invoke } from '@tauri-apps/api'
+import { invoke } from '@tauri-apps/api/core'
 // Patch file from: https://github.com/34736384/RSAPatch/
 
 export async function patchGame(newerGame: boolean, version: string) {

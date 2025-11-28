@@ -5,7 +5,6 @@
 
 use once_cell::sync::Lazy;
 use std::{path::PathBuf, str::FromStr, sync::Mutex};
-
 use hudsucker::{
   async_trait::async_trait,
   certificate_authority::RcgenAuthority,
@@ -19,7 +18,6 @@ use std::net::SocketAddr;
 use std::path::Path;
 
 use rustls_pemfile as pemfile;
-use tauri::{api::path::data_dir, http::Uri};
 
 #[cfg(windows)]
 use registry::{Data, Hive, Security};
@@ -59,7 +57,7 @@ impl HttpHandler for ProxyHandler {
   async fn handle_request(
     &mut self,
     _ctx: &HttpContext,
-    mut req: Request<Body>,
+    mut req: Request<Body>
   ) -> RequestOrResponse {
     let uri = req.uri().to_string();
 
@@ -85,11 +83,9 @@ impl HttpHandler for ProxyHandler {
       } else {
         let uri_path_and_query = req.uri().path_and_query().unwrap().as_str();
         // Create new URI.
-        let new_uri =
-          Uri::from_str(format!("{}{}", SERVER.lock().unwrap(), uri_path_and_query).as_str())
+        *req.uri_mut() =
+          hudsucker::hyper::Uri::from_str(format!("{}{}", SERVER.lock().unwrap(), uri_path_and_query).as_str())
             .unwrap();
-        // Set request URI to the new one.
-        *req.uri_mut() = new_uri;
       }
     }
 
@@ -132,7 +128,7 @@ pub async fn create_proxy(proxy_port: u16, certificate_path: String) {
     Ok(b) => b,
     Err(e) => {
       println!("Encountered {}. Regenerating CA cert and retrying...", e);
-      generate_ca_files(&data_dir().unwrap().join("cultivation"));
+      generate_ca_files(&dirs::config_dir().unwrap().join("cultivation"));
 
       fs::read(&pk_path).expect("Could not read private key")
     }
@@ -143,7 +139,7 @@ pub async fn create_proxy(proxy_port: u16, certificate_path: String) {
     Ok(b) => b,
     Err(e) => {
       println!("Encountered {}. Regenerating CA cert and retrying...", e);
-      generate_ca_files(&data_dir().unwrap().join("cultivation"));
+      generate_ca_files(&dirs::config_dir().unwrap().join("cultivation"));
 
       fs::read(&ca_path).expect("Could not read certificate")
     }

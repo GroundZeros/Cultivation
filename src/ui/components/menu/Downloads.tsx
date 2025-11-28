@@ -9,10 +9,10 @@ import { dataDir } from '@tauri-apps/api/path'
 import './Downloads.css'
 import Divider from './Divider'
 import { getConfigOption, setConfigOption } from '../../../utils/configuration'
-import { invoke } from '@tauri-apps/api'
+import { invoke } from '@tauri-apps/api/core'
 import { listen } from '@tauri-apps/api/event'
 import HelpButton from '../common/HelpButton'
-import { ask } from '@tauri-apps/api/dialog'
+import { ask } from '@tauri-apps/plugin-dialog'
 
 const FULL_BUILD_DOWNLOAD = 'https://github.com/NotThorny/Grasscutter/releases/download/culti-aio/GrasscutterCulti.zip' // Change to link that can be updated without modifying here
 const FULL_QUEST_DOWNLOAD = 'https://github.com/NotThorny/Grasscutter/releases/download/culti-aio/GrasscutterQuests.zip'
@@ -104,15 +104,15 @@ export default class Downloads extends React.Component<IProps, IState> {
       return
     }
 
-    const path = gc_path.substring(0, gc_path.lastIndexOf('\\'))
+    const path = gc_path.substring(0, gc_path.lastIndexOf('/'))
 
     if (gc_path) {
       const resources_exist: boolean =
         ((await invoke('dir_exists', {
-          path: path + '\\resources',
+          path: path + '/resources',
         })) as boolean) &&
         (!(await invoke('dir_is_empty', {
-          path: path + '\\resources',
+          path: path + '/resources',
         })) as boolean)
 
       this.setState({
@@ -129,7 +129,7 @@ export default class Downloads extends React.Component<IProps, IState> {
     // Set to default if not set
     if (!path || path === '') {
       const appdata = await dataDir()
-      folderPath = appdata + 'cultivation\\grasscutter'
+      folderPath = appdata + '/cultivation/grasscutter'
 
       // Early return since its formatted properly
       return folderPath
@@ -145,15 +145,15 @@ export default class Downloads extends React.Component<IProps, IState> {
   }
 
   async getCultivationFolder() {
-    const folderPath = (await dataDir()) + 'cultivation'
+    const folderPath = (await dataDir()) + '/cultivation'
 
     return folderPath
   }
 
   async downloadGrasscutterFullBuild() {
     const folder = await this.getGrasscutterFolder()
-    this.props.downloadManager.addDownload(FULL_BUILD_DOWNLOAD, folder + '\\GrasscutterCulti.zip', async () => {
-      await unzip(folder + '\\GrasscutterCulti.zip', folder + '\\', true)
+    this.props.downloadManager.addDownload(FULL_BUILD_DOWNLOAD, folder + '/GrasscutterCulti.zip', async () => {
+      await unzip(folder + '/GrasscutterCulti.zip', folder + '/', true)
       this.toggleButtons()
     })
 
@@ -162,8 +162,8 @@ export default class Downloads extends React.Component<IProps, IState> {
 
   async downloadGrasscutterFullQuest() {
     const folder = await this.getGrasscutterFolder()
-    this.props.downloadManager.addDownload(FULL_QUEST_DOWNLOAD, folder + '\\GrasscutterQuests.zip', async () => {
-      await unzip(folder + '\\GrasscutterQuests.zip', folder + '\\', true)
+    this.props.downloadManager.addDownload(FULL_QUEST_DOWNLOAD, folder + '/GrasscutterQuests.zip', async () => {
+      await unzip(folder + '/GrasscutterQuests.zip', folder + '/', true)
       this.toggleButtons()
     })
 
@@ -172,8 +172,8 @@ export default class Downloads extends React.Component<IProps, IState> {
 
   async downloadGrasscutterFull50() {
     const folder = await this.getGrasscutterFolder()
-    this.props.downloadManager.addDownload(FULL_50_DOWNLOAD, folder + '\\Grasscutter50.zip', async () => {
-      await unzip(folder + '\\Grasscutter50.zip', folder + '\\', true)
+    this.props.downloadManager.addDownload(FULL_50_DOWNLOAD, folder + '/Grasscutter50.zip', async () => {
+      await unzip(folder + '/Grasscutter50.zip', folder + '/', true)
       this.toggleButtons()
     })
 
@@ -182,8 +182,8 @@ export default class Downloads extends React.Component<IProps, IState> {
 
   async downloadGrasscutterStableRepo() {
     const folder = await this.getGrasscutterFolder()
-    this.props.downloadManager.addDownload(STABLE_REPO_DOWNLOAD, folder + '\\grasscutter_repo.zip', async () => {
-      await unzip(folder + '\\grasscutter_repo.zip', folder + '\\', true)
+    this.props.downloadManager.addDownload(STABLE_REPO_DOWNLOAD, folder + '/grasscutter_repo.zip', async () => {
+      await unzip(folder + '/grasscutter_repo.zip', folder + '/', true)
       this.toggleButtons()
     })
 
@@ -192,8 +192,8 @@ export default class Downloads extends React.Component<IProps, IState> {
 
   async downloadGrasscutterDevRepo() {
     const folder = await this.getGrasscutterFolder()
-    this.props.downloadManager.addDownload(DEV_REPO_DOWNLOAD, folder + '\\grasscutter_repo.zip', async () => {
-      await unzip(folder + '\\grasscutter_repo.zip', folder + '\\', true)
+    this.props.downloadManager.addDownload(DEV_REPO_DOWNLOAD, folder + '/grasscutter_repo.zip', async () => {
+      await unzip(folder + '/grasscutter_repo.zip', folder + '/', true)
       this.toggleButtons()
     })
 
@@ -202,8 +202,8 @@ export default class Downloads extends React.Component<IProps, IState> {
 
   async downloadGrasscutterUnstable() {
     const folder = await this.getGrasscutterFolder()
-    this.props.downloadManager.addDownload(UNSTABLE_DOWNLOAD, folder + '\\grasscutter.zip', async () => {
-      await unzip(folder + '\\grasscutter.zip', folder + '\\', true)
+    this.props.downloadManager.addDownload(UNSTABLE_DOWNLOAD, folder + '/grasscutter.zip', async () => {
+      await unzip(folder + '/grasscutter.zip', folder + '/', true)
       this.toggleButtons
     })
 
@@ -212,8 +212,8 @@ export default class Downloads extends React.Component<IProps, IState> {
 
   async downloadGrasscutterLatest() {
     const folder = await this.getGrasscutterFolder()
-    this.props.downloadManager.addDownload(DEV_DOWNLOAD, folder + '\\grasscutter.zip', async () => {
-      await unzip(folder + '\\grasscutter.zip', folder + '\\', true)
+    this.props.downloadManager.addDownload(DEV_DOWNLOAD, folder + '/grasscutter.zip', async () => {
+      await unzip(folder + '/grasscutter.zip', folder + '/', true)
       this.toggleButtons()
     })
 
@@ -240,22 +240,22 @@ export default class Downloads extends React.Component<IProps, IState> {
     )
 
     const folder = await this.getGrasscutterFolder()
-    this.props.downloadManager.addDownload(RESOURCES_DOWNLOAD, folder + '\\resources.zip', async () => {
+    this.props.downloadManager.addDownload(RESOURCES_DOWNLOAD, folder + '/resources.zip', async () => {
       // Delete the existing folder if it exists
       if (
         await invoke('dir_exists', {
-          path: folder + '\\resources',
+          path: folder + '/resources',
         })
       ) {
         await invoke('dir_delete', {
-          path: folder + '\\resources',
+          path: folder + '/resources',
         })
       }
 
-      await unzip(folder + '\\resources.zip', folder + '\\', true)
+      await unzip(folder + '/resources.zip', folder + '/', true)
       // Rename folder to resources
       invoke('rename', {
-        path: folder + '\\Resources',
+        path: folder + '/Resources',
         newName: 'resources',
       })
 
@@ -274,8 +274,8 @@ export default class Downloads extends React.Component<IProps, IState> {
 
     const folder = await this.getCultivationFolder()
 
-    this.props.downloadManager.addDownload(MIGOTO_DOWNLOAD, folder + '\\GIMI.zip', async () => {
-      await unzip(folder + '\\GIMI.zip', folder + '\\', true, true)
+    this.props.downloadManager.addDownload(MIGOTO_DOWNLOAD, folder + '/GIMI.zip', async () => {
+      await unzip(folder + '/GIMI.zip', folder + '/', true, true)
       this.toggleButtons()
     })
 
@@ -285,8 +285,8 @@ export default class Downloads extends React.Component<IProps, IState> {
   async downloadMigotoFallback() {
     const folder = await this.getCultivationFolder()
 
-    this.props.downloadManager.addDownload(MIGOTO_FALLBACK, folder + '\\GIMI7.zip', async () => {
-      await unzip(folder + '\\GIMI7.zip', folder + '\\', true, true)
+    this.props.downloadManager.addDownload(MIGOTO_FALLBACK, folder + '/GIMI7.zip', async () => {
+      await unzip(folder + '/GIMI7.zip', folder + '/', true, true)
       this.toggleButtons()
     })
 

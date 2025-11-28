@@ -1,3 +1,5 @@
+use tauri::Emitter;
+
 use crate::system_helpers::*;
 use std::path::{Path, PathBuf};
 

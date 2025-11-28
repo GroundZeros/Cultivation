@@ -1,4 +1,4 @@
-import { invoke } from '@tauri-apps/api'
+import { invoke } from '@tauri-apps/api/core'
 import { getConfigOption } from './configuration'
 
 // Generated with https://transform.tools/json-to-typescript I'm lazy cry about it

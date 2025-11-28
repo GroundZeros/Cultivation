@@ -1,4 +1,3 @@
-use ini::Ini;
 use std::path::PathBuf;
 use std::process::Command;
 
@@ -18,6 +17,7 @@ use anime_launcher_sdk::{
   config::ConfigExt, genshin::config::Config, genshin::game, genshin::states::LauncherState,
   wincompatlib::prelude::*,
 };
+use ini::Ini;
 #[cfg(target_os = "linux")]
 use std::{path::Path, process::Stdio, thread};
 #[cfg(target_os = "linux")]
@@ -296,11 +296,7 @@ fn aagl_wine_run<P: AsRef<Path>>(path: P, args: Option<String>) -> Command {
     .into_iter()
     .map(|(k, v)| (k.to_string(), v.to_string()))
     .collect();
-  use anime_launcher_sdk::components::wine::UnifiedWine::*;
-  let wined = match wine_run {
-    Default(wine) => wine,
-    Proton(proton) => proton.wine().clone(),
-  };
+  let wined = wine_run;
   let mut cmd = Command::new(&wined.binary);
   cmd.arg(path.as_ref()).envs(wined.get_envs()).envs(env);
   if let Some(args) = args {
@@ -426,7 +422,7 @@ pub fn set_migoto_delay(migoto_path: String) -> bool {
   conf.with_section(Some("Loader")).set("delay", "20");
   conf
     .with_section(Some("Include"))
-    .set("include", "ShaderFixes\\help.ini");
+    .set("include", "ShaderFixes/help.ini");
 
   // Write file
   match conf.write_to_file_opt(
@@ -434,6 +430,7 @@ pub fn set_migoto_delay(migoto_path: String) -> bool {
     ini::WriteOption {
       escape_policy: (ini::EscapePolicy::Nothing),
       line_separator: (ini::LineSeparator::SystemDefault),
+      kv_separator: "=",
     },
   ) {
     Ok(_) => {

@@ -16,11 +16,11 @@ import Notification from './components/common/Notification'
 import GamePathNotify from './components/menu/GamePathNotify'
 
 import { getConfig, getConfigOption, setConfigOption } from '../utils/configuration'
-import { invoke } from '@tauri-apps/api'
+import { invoke } from '@tauri-apps/api/core'
 import { getVersion } from '@tauri-apps/api/app'
 import { listen } from '@tauri-apps/api/event'
 import { dataDir } from '@tauri-apps/api/path'
-import { appWindow } from '@tauri-apps/api/window'
+import { getCurrentWebviewWindow } from '@tauri-apps/api/webviewWindow'
 import { unpatchGame } from '../utils/rsa'
 import DownloadHandler from '../utils/download'
 
@@ -28,6 +28,7 @@ import DownloadHandler from '../utils/download'
 import cogBtn from '../resources/icons/cog.svg'
 import downBtn from '../resources/icons/download.svg'
 import wrenchBtn from '../resources/icons/wrench.svg'
+const appWindow = getCurrentWebviewWindow()
 
 interface IProps {
   downloadHandler: DownloadHandler
@@ -163,7 +164,7 @@ export class Main extends React.Component<IProps, IState> {
     if (!cert_generated) {
       // Generate the certificate
       await invoke('generate_ca_files', {
-        path: (await dataDir()) + 'cultivation',
+        path: (await dataDir()) + '/cultivation',
       })
 
       await setConfigOption('cert_generated', true)
@@ -224,7 +225,7 @@ export class Main extends React.Component<IProps, IState> {
     })
   }
 
-  async componentDidUpdate(prevProps: Readonly<IProps>, prevState: Readonly<IState>) {
+  async componentDidUpdate(_prevProps: Readonly<IProps>, prevState: Readonly<IState>) {
     const game_path = await getConfigOption('game_install_path')
 
     // Check if game exists at set location
