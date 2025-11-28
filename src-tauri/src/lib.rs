@@ -8,13 +8,12 @@ use args::{Args, ArgsError};
 use once_cell::sync::Lazy;
 use proxy::set_proxy_addr;
 use tauri::{Listener, Emitter};
-use std::ffi::OsStr;
 use std::io::Write;
 use std::{collections::HashMap, sync::Mutex};
 use tauri::async_runtime::block_on;
 
 use std::thread;
-use sysinfo::{Pid, System};
+use sysinfo::{Pid, ProcessExt, System, SystemExt};
 
 #[cfg(target_os = "windows")]
 use crate::admin::reopen_as_admin;
@@ -167,7 +166,7 @@ pub fn run() {
     let args: Vec<String> = std::env::args().collect();
     let parsed_args = block_on(parse_args(&args)).unwrap();
     #[cfg(target_os = "windows")]
-  if !is_elevated() && !parsed_args.value_of("no-admin")? {
+  if !is_elevated() && !parsed_args.has_value("no-admin") {
     println!("===============================================================================");
     println!("You running as a non-elevated user. Some stuff will almost definitely not work.");
     println!("===============================================================================");
@@ -420,8 +419,8 @@ fn enable_grasscutter_watcher(window: tauri::Window, process: String) {
 
     let mut system = System::new_all();
 
-    for process_gc in system.processes_by_name(OsStr::new("java")) {
-      if process_gc.cmd().last().unwrap().to_str().unwrap().contains(&grasscutter_name) {
+    for process_gc in system.processes_by_name("java") {
+      if process_gc.cmd().last().unwrap().contains(&grasscutter_name)  {
         gc_pid = process_gc.pid();
         *GC_PID.lock().unwrap() = gc_pid.into();
         window
