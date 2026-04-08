@@ -11,6 +11,7 @@ on:
       - '.github/workflows/build.yml'
       - 'src-tauri/**/*'
       - 'src/**/*'
+  workflow_dispatch: {}
 
 concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
@@ -49,7 +50,7 @@ jobs:
           name: CultivationWin
           path: Cultivation.zip
   build-ubuntu:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v2
