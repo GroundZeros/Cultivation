@@ -68,19 +68,10 @@ jobs:
       - name: Install libraries
         run: |
           sudo apt update
-          sudo apt install libwebkit2gtk-4.1-dev \
-            build-essential \
-            curl \
-            wget \
-            file \
-            libxdo-dev \
-            libssl-dev \
-            libayatana-appindicator3-dev \
-            librsvg2-dev \
-            protobuf-compiler \
-            libprotobuf-dev
+          sudo apt install libwebkit2gtk-4.0-dev build-essential curl wget libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev
+
       - name: Install deps and build
-        run: yarn && NO_STRIP=true yarn tauri build
+        run: yarn && yarn build --debug
 
       - name: Compress build
         uses: vimtor/action-zip@v1
