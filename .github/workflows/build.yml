@@ -80,7 +80,7 @@ jobs:
             protobuf-compiler \
             libprotobuf-dev
       - name: Install deps and build
-        run: run: yarn && NO_STRIP=true yarn tauri build
+        run: yarn && NO_STRIP=true yarn tauri build
 
       - name: Compress build
         uses: vimtor/action-zip@v1
